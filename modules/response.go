@@ -29,7 +29,7 @@ func SysErr() ResInfo {
 }
 
 func InsertErr() []byte {
-	x, _ := json.Marshal(resInfo{
+	x, _ := json.Marshal(ResInfo{
 		Code: 1,
 		Msg:  "创建失败",
 	})
@@ -37,7 +37,7 @@ func InsertErr() []byte {
 }
 
 func UpdateErr() []byte {
-	x, _ := json.Marshal(resInfo{
+	x, _ := json.Marshal(ResInfo{
 		Code: 1,
 		Msg:  "修改失败",
 	})

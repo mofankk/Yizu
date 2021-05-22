@@ -16,7 +16,7 @@ type House struct {
 
 	Rooms int `json:"rooms"` // 卧室数量
 
-	Rent     float32 `json:"rent" gorm:"type:numeric(5,2)"`    // 每月租金
+	Rent     float32 `json:"rent" gorm:"type:numeric(5,2)"`    // 月租金
 	PayCycle string  `json:"pay_cycle"`                        // 支付周期(月付、季付、年付)
 	Deposit  float32 `json:"deposit" gorm:"type:numeric(5,2)"` // 押金
 
@@ -55,4 +55,24 @@ func (*HouseDetail) TableName() string {
 }
 func (*HouseHistory) TableName() string {
 	return "house_history"
+}
+
+// HouseQueryCondition 房源列表查询条件
+// 后期可以设置多个街道或者标志性建筑这种查询条件
+type HouseQueryCondition struct {
+	Province string `json:"province"` // 省
+	City     string `json:"city"`     // 市
+	District string `json:"district"` // 区
+	Street   string `json:"street"`   // 街道
+
+	StartTime string `json:"start_time"` // 发布时间-开始
+	EndTime   string `json:"end_time"`   // 发布时间-截止
+
+	RentUp  float32 `json:"rent_up"`  // 月租金-最大值
+	RentLow float32 `json:"rent_low"` // 月租金-最小值
+
+	UpdateTime string `json:"update_time"` // 更新时间 用于对显示结果排序
+
+	Page     int `json:"page"`      // 当前页码
+	PageSize int `json:"page_size"` // 每页数量
 }

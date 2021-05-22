@@ -117,6 +117,7 @@ func (*SessionManager) Logout(c *gin.Context) {
 }
 
 // Register 用户注册
+// 先获取验证码
 func (*SessionManager) Register(c *gin.Context) {
 
 }

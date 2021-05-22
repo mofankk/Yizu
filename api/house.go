@@ -4,16 +4,18 @@ import (
 	"encoding/json"
 	"github.com/gin-gonic/gin"
 	"io/ioutil"
+	"net/http"
 	"yizu/modules"
 	"yizu/util"
 )
 
-// 评价管理
+// 房子管理模块
 
 type HouseManager struct {
 
 }
 
+// List 获取房源列表
 func (*HouseManager) List(c *gin.Context) {
 
 }
@@ -28,13 +30,12 @@ func (*HouseManager) Modify(c *gin.Context) {
 	req, _ := ioutil.ReadAll(c.Request.Body)
 	err := json.Unmarshal(req, &info)
 	if err != nil {
-		c.Writer.Write(modules.ArgErr())
+
 		return
 	}
 
 	db, e := yizuutil.GetDB()
 	if e != nil {
-		c.Writer.Write(modules.SysErr())
 		return
 	}
 
@@ -52,6 +53,28 @@ func (*HouseManager) Modify(c *gin.Context) {
 		}
 	}
 
-	c.Writer.Write(modules.Success())
 	return
 }
+
+// SetLocation 设置地理位置信息
+func (*HouseManager) SetLocation(c *gin.Context) {
+	type Acc struct {
+		Province string `json:"province"` // 省
+		City     string `json:"city"`     // 市
+		District string `json:"district"` // 区
+		Street   string `json:"street"`   // 街道
+	}
+	acc := &Acc{}
+	if err := c.ShouldBind(acc); err != nil {
+		c.JSON(http.StatusBadRequest, modules.ArgErr())
+		return
+	}
+
+}
+
+// GetLocation 获取地理位置信息
+// 在每次浏览房源的时候获取一下, 用于显示已配置过的信息
+func (*HouseManager) GetLocation(c *gin.Context) {
+
+}
+

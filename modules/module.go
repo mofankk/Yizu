@@ -18,3 +18,11 @@ type Role struct {
 // 用户动态表（发表的动态）
 
 // 聊天功能 咨询
+
+// CacheInfo 缓存信息
+type CacheInfo struct {
+	HouseProvince string // 省
+	HouseCity     string // 市
+	HouseDistrict string // 区
+	HouseStreet   string // 街道
+}

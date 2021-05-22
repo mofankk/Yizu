@@ -2,7 +2,6 @@ package conf
 
 import (
 	"encoding/json"
-	"io"
 	"os"
 	"path/filepath"
 	"sync"
@@ -31,23 +30,23 @@ type Config struct {
 	AvatarUrl    string
 }
 
-var config Config
+var config *Config
 var once sync.Once
 
-func ServerConfig() Config {
+func ServerConfig() *Config{
 
 	once.Do(func() {
-		config = Config{}
+		config = &Config{}
 		r := redisConfig{
 			Size:     30,
-			Address:  ":923",
+			Address:  "152.136.114.51:923",
 			Password: "Cx330$2021.@",
 			DB:       "0",
 		}
 		p := postgresConfig{
 			Username: "baitong",
 			Password: "Cx330$2021.@",
-			Address:  "localhost",
+			Address:  "152.136.114.51",
 			Port:     "2237",
 			DBName:   "yizu",
 		}
@@ -57,11 +56,17 @@ func ServerConfig() Config {
 		config.HouseImgPath = filepath.Join("..", "h_image_path")
 		config.AvatarUrl = filepath.Join("..", "avatar")
 
-		file, _ := os.Open("server_config.json")
-		defer file.Close()
-
-		jstr, _ := io.ReadAll(file)
-		json.Unmarshal(jstr, &config)
+		//file, err := os.Open("server_config.json")
+		//if err != nil {
+		//	log.Errorf("载入配置文件出错: %v", err)
+		//}
+		//defer file.Close()
+		//
+		//jstr, _ := io.ReadAll(file)
+		//err = json.Unmarshal(jstr, config)
+		//if err != nil {
+		//	log.Errorf("JSON解析失败: %v", err)
+		//}
 	})
 
 	return config

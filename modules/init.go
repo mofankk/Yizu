@@ -12,7 +12,7 @@ func init() {
 	for {
 		db, err := yizuutil.GetDB()
 		if err != nil {
-			log.Errorf("%s%v", DatabaseConnErr, err)
+			log.Errorf("PostgreSQL连接失败: %v", err)
 		} else {
 			log.Info("数据库连接成功")
 			db.AutoMigrate(
