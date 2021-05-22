@@ -1,5 +1,6 @@
 package modules
 
 var (
-	DatabaseConnErr = "获取数据库连接失败: "
+	PostgreSQLErr = "PostgreSQL连接失败: "
+	RedisErr = "Redis连接失败: "
 )
