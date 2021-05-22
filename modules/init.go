@@ -6,18 +6,19 @@ import (
 	"yizu/util"
 )
 
-func init() {
+// 与数据库同步表结构
+func Init() {
 	for {
 		db, err := yizuutil.GetDB()
 		if err != nil {
-			log.Errorf("数据库连接失败： %v", err)
+			log.Errorf("%s%v", DatabaseConnErr, err)
 		} else {
 			log.Info("数据库连接成功")
-
-			//更新数据库表
-			if e := db.AutoMigrate(House{}); e != nil {
-				log.Errorf("更新表'house'失败: %v", e)
-			}
+			db.AutoMigrate(
+				&User{},
+				&House{},
+				&HouseDetail{},
+				&HouseHistory{})
 
 			break
 		}

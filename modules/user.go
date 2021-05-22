@@ -14,3 +14,7 @@ type User struct {
 	SelfIntroduce string `json:"self_introduce"` // 自我介绍
 	Score 		  float32  `json:"score" gorm:"numeric(3,1)"` // 评价得分
 }
+
+func (*User) TableName() string {
+	return "user"
+}

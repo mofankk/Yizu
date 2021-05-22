@@ -21,9 +21,10 @@ type House struct {
 	Deposit  float32 `json:"deposit" gorm:"type:numeric(5,2)"` // 押金
 
 	Address string `json:"address"` // 房屋详细地址
-	ImgUrl	string `json:"img_url"` // 房屋列表图片
+	ImgUrl  string `json:"img_url"` // 房屋列表图片
 
-	Score 		  float32  `json:"score" gorm:"numeric(3,1)"` // 评价得分
+	Score       float32 `json:"score" gorm:"numeric(3,1)"` // 评价得分
+	Description string  `json:"description"`               // 房屋简介
 }
 
 // HouseDetail 房子详情
@@ -32,5 +33,26 @@ type HouseDetail struct {
 	HouseId  string `json:"house_id"`
 	Name     string `json:"name"`     // 区域名称
 	Describe string `json:"describe"` // 描述
-	ImgPath string `json:"img_path"`  // 图片路径, 因为可能有多个,这里只存储图片的目录路径
+	ImgPath  string `json:"img_path"` // 图片路径, 因为可能有多个,这里只存储图片的目录路径
+}
+
+// HouseHistory 房子浏览历史
+type HouseHistory struct {
+	Id          int     `json:"-" gorm:"primaryKey;AUTO_INCREMENT"`
+	HouseId     string  `json:"house_id"`
+	ImgUrl      string  `json:"img_url"`
+	Name        string  `json:"name"`
+	Rent        float32 `json:"rent" gorm:"type:numeric(5,2)"` // 每月租金
+	PayCycle    string  `json:"pay_cycle"`                     // 支付周期(月付、季付、年付)
+	Description string  `json:"description"`                   // 房屋简介
+}
+
+func (*House) TableName() string {
+	return "house"
+}
+func (*HouseDetail) TableName() string {
+	return "house_detail"
+}
+func (*HouseHistory) TableName() string {
+	return "house_history"
 }
