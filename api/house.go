@@ -38,7 +38,7 @@ func (*HouseManager) Modify(c *gin.Context) {
 		return
 	}
 
-	if  info.Id.ID() == 0 {
+	if  info.Id == "" {
 		err = db.Create(&info).Error
 		if err != nil {
 			c.Writer.Write(modules.InsertErr())
