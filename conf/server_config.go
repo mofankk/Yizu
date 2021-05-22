@@ -24,7 +24,7 @@ type postgresConfig struct {
 }
 
 type Config struct {
-	ReConfig     redisConfig
+	RdConfig     redisConfig
 	PgConfig     postgresConfig
 	HouseImgUrl  string
 	HouseImgPath string
@@ -51,8 +51,8 @@ func ServerConfig() Config {
 			Port:     "2237",
 			DBName:   "yizu",
 		}
-		config.RedisConfig = r
-		config.PostgresConfig = p
+		config.RdConfig = r
+		config.PgConfig = p
 		config.HouseImgUrl = filepath.Join("..", "h_image")
 		config.HouseImgPath = filepath.Join("..", "h_image_path")
 		config.AvatarUrl = filepath.Join("..", "avatar")

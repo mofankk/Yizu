@@ -33,11 +33,11 @@ func init() {
 	once.Do(func() {
 		var err error
 		store, err = redistore.NewRediStoreWithDB(
-			conf.ServerConfig().ReConfig.Size,
+			conf.ServerConfig().RdConfig.Size,
 			"TCP",
-			conf.ServerConfig().ReConfig.Address,
-			conf.ServerConfig().ReConfig.Password,
-			conf.ServerConfig().ReConfig.DB,
+			conf.ServerConfig().RdConfig.Address,
+			conf.ServerConfig().RdConfig.Password,
+			conf.ServerConfig().RdConfig.DB,
 		)
 		if err != nil {
 			log.Errorf("%s%v", modules.RedisErr, err)
