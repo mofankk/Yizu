@@ -18,7 +18,10 @@ func Init() {
 				&User{},
 				&House{},
 				&HouseDetail{},
-				&HouseHistory{})
+				&HouseHistory{},
+				&UserComment{},
+				&HouseComment{},
+				)
 
 			break
 		}
