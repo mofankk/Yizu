@@ -2,15 +2,15 @@ package router
 
 import (
 	"github.com/gin-gonic/gin"
-	"yizu/handler"
+	"yizu/api"
 )
 
 func Run() {
 
-	u := handler.UserManager{}
-	h := handler.HouseManager{}
-	s := handler.ScanHistory{}
-	hi := handler.HiGin{}
+	u := api.UserManager{}
+	h := api.HouseManager{}
+	s := api.ScanHistory{}
+	hi := api.HiGin{}
 
 	gin.SetMode(gin.ReleaseMode)
 	router := gin.Default()

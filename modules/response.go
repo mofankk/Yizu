@@ -47,4 +47,17 @@ func UpdateErr() []byte {
 	return x
 }
 
+type ResultInfo struct {
+	Code int    `json:"code"`
+	Msg  string `json:"msg"`
+	Result interface{} `json:"result"`
+}
 
+func QuerySuccess() ResultInfo {
+	x := ResultInfo{
+		Code: 1,
+		Msg:  "修改失败",
+		Result: nil,
+	}
+	return x
+}
