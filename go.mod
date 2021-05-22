@@ -8,7 +8,8 @@ require (
 	github.com/google/uuid v1.0.0
 	github.com/gorilla/sessions v1.2.1 // indirect
 	github.com/sirupsen/logrus v1.8.1
-	gopkg.in/boj/redistore.v1 v1.0.0-20160128113310-fc113767cd6b // indirect
+	github.com/tencentcloud/tencentcloud-sdk-go v1.0.166
+	gopkg.in/boj/redistore.v1 v1.0.0-20160128113310-fc113767cd6b
 	gorm.io/driver/postgres v1.1.0
 	gorm.io/gorm v1.21.10
 )
