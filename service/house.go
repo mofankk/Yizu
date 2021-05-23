@@ -3,6 +3,7 @@ package service
 import (
 	log "github.com/sirupsen/logrus"
 	"gorm.io/gorm"
+	"mime/multipart"
 	"yizu/modules"
 )
 
@@ -60,4 +61,10 @@ func (*HouseService) QueryHouseList(h *modules.HouseQueryArg, db *gorm.DB) []mod
 		log.Errorf("数据库查询失败: %v", err)
 	}
 	return list
+}
+
+func (*HouseService) SaveImg(file *multipart.FileHeader, Id string) {
+
+
+
 }

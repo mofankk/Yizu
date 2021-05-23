@@ -2,6 +2,8 @@ package conf
 
 import (
 	"encoding/json"
+	log "github.com/sirupsen/logrus"
+	"io"
 	"os"
 	"path/filepath"
 	"sync"
@@ -53,35 +55,33 @@ func ServerConfig() *Config{
 		}
 		config.RdConfig = r
 		config.PgConfig = p
-		config.HouseImgUrl = filepath.Join("..", "h_image")
-		config.HouseImgPath = filepath.Join("..", "h_image_path")
-		config.AvatarUrl = filepath.Join("..", "avatar")
+		config.HouseImgUrl = filepath.Join(os.Getenv("PWD"), "house_image")
+		config.HouseImgPath = filepath.Join("./", "house_image_path")
+		config.AvatarUrl = filepath.Join("./", "avatar")
 		config.Port = "2017"
 
-		//file, err := os.Open("server_config.json")
-		//if err != nil {
-		//	log.Errorf("载入配置文件出错: %v", err)
-		//}
-		//defer file.Close()
-		//
-		//jstr, _ := io.ReadAll(file)
-		//err = json.Unmarshal(jstr, config)
-		//if err != nil {
-		//	log.Errorf("JSON解析失败: %v", err)
-		//}
+		file, err := os.Open("server_config.json")
+		if err != nil {
+			log.Errorf("载入配置文件出错: %v", err)
+		}
+		defer file.Close()
+
+		jstr, _ := io.ReadAll(file)
+		err = json.Unmarshal(jstr, config)
+		if err != nil {
+			log.Errorf("JSON解析失败: %v", err)
+		}
+
+		config.SaveToFile()
 	})
 
 	return config
 }
 
 func (*Config) SaveToFile() {
-	file, _ := os.Create("server_config.json")
+	file, _ := os.Create("conf/server_config.json")
+	defer file.Close()
 	enc := json.NewEncoder(file)
 	enc.SetIndent("", "\t")
 	enc.Encode(config)
-}
-
-func init() {
-	cfg := ServerConfig()
-	cfg.SaveToFile()
 }

@@ -1,7 +1,5 @@
 package modules
 
-import "encoding/json"
-
 type ResInfo struct {
 	Code int    `json:"code"`
 	Msg  string `json:"msg"`
@@ -35,20 +33,18 @@ func SysErr() ResInfo {
 	}
 }
 
-func InsertErr() []byte {
-	x, _ := json.Marshal(ResInfo{
+func InsertErr() ResInfo {
+	return ResInfo{
 		Code: 1,
 		Msg:  "创建失败",
-	})
-	return x
+	}
 }
 
-func UpdateErr() []byte {
-	x, _ := json.Marshal(ResInfo{
+func UpdateErr() ResInfo {
+	return ResInfo{
 		Code: 1,
 		Msg:  "修改失败",
-	})
-	return x
+	}
 }
 
 type ResultInfo struct {

@@ -3,9 +3,11 @@ package api
 import (
 	"encoding/json"
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	log "github.com/sirupsen/logrus"
 	"io/ioutil"
 	"net/http"
+	"yizu/conf"
 	"yizu/modules"
 	"yizu/service"
 	"yizu/util"
@@ -40,36 +42,62 @@ func (*HouseManager) Delete(c *gin.Context) {
 
 }
 
+// 新建或者更新房子信息
 func (*HouseManager) Modify(c *gin.Context) {
 
+	// 房子封面图
+	file, err := c.FormFile("house_img")
+	if err != nil {
+		c.JSON(http.StatusBadRequest, modules.ArgErr())
+		return
+	}
+	err = c.SaveUploadedFile(file, conf.ServerConfig().HouseImgUrl + "/" + file.Filename) // 需要将文件名入库
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, modules.Failure())
+		log.Errorf("图片保存失败: %v", err)
+	} else {
+		c.JSON(http.StatusOK, modules.Success())
+	}
+	// 解析房子其他信息
 	info := modules.House{}
 	req, _ := ioutil.ReadAll(c.Request.Body)
-	err := json.Unmarshal(req, &info)
+	err = json.Unmarshal(req, &info)
 	if err != nil {
-
+		c.JSON(http.StatusBadRequest, modules.ArgErr())
 		return
 	}
 
 	db, e := yizuutil.GetDB()
 	if e != nil {
+		c.JSON(http.StatusInternalServerError, modules.SysErr())
 		return
 	}
-
-	if  info.Id == "" {
+	// 采用事务进行提交
+	tx := db.Begin()
+	flag := false
+	if info.Id == "" {
+		info.Id = uuid.New().String()
 		err = db.Create(&info).Error
 		if err != nil {
-			c.Writer.Write(modules.InsertErr())
-			return
+			flag = true
 		}
 	} else {
-		err = db.Omit("create_time", "delete_time").Updates(&info).Error
+		err = db.Omit("create_time", "delete_time", "img_url").Updates(&info).Error
 		if err != nil {
-			c.Writer.Write(modules.UpdateErr())
-			return
+			flag = true
 		}
 	}
-
-	return
+	err = tx.Where(modules.House{Id: info.Id}).Update("house_img", file.Filename).Error
+	if err != nil {
+		flag = true
+	}
+	if flag {
+		tx.Rollback()
+		c.JSON(http.StatusInternalServerError, modules.Failure())
+	} else {
+		tx.Commit()
+		c.JSON(http.StatusOK, modules.Success())
+	}
 }
 
 // SetLocation 设置地理位置信息
@@ -96,18 +124,9 @@ func (*HouseManager) GetLocation(c *gin.Context) {
 
 // UploadImg 上传房源首页图-单图上传
 func (*HouseManager) UploadImg(c *gin.Context) {
-	file, err := c.FormFile("house_img")
-	if err != nil {
-		c.JSON(http.StatusBadRequest, modules.ArgErr())
-		return
-	}
-	err = c.SaveUploadedFile(file, "./house_img/" + file.Filename) // 需要将文件名入库
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, modules.Failure())
-		log.Errorf("图片保存失败: %v", err)
-	} else {
-		c.JSON(http.StatusOK, modules.Success())
-	}
+
+
+
 }
 
 // UploadMultImg 上传内部详情图-多图上传

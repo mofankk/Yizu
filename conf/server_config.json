@@ -12,8 +12,8 @@
 		"Port": "2237",
 		"DBName": "yizu"
 	},
-	"HouseImgUrl": "../h_image",
-	"HouseImgPath": "../h_image_path",
-	"AvatarUrl": "../avatar",
+	"HouseImgUrl": "/Users/cyp/yizu/house_image",
+	"HouseImgPath": "house_image_path",
+	"AvatarUrl": "avatar",
 	"Port": "2017"
 }
