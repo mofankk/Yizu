@@ -13,6 +13,11 @@ type User struct {
 	Birthday      string  `json:"birthday"`                  // 生日
 	SelfIntroduce string  `json:"self_introduce"`            // 自我介绍
 	Score         float32 `json:"score" gorm:"numeric(3,1)"` // 评价得分
+
+	Name       string `json:"-"`           // 真实姓名
+	IdCardNo   string `json:"-"`           // 身份证号
+	Status     int    `json:"-"`           // 账号状态 1：正常, 2：注销, 3：封号
+	ForbidTime string `json:"forbid_time"` // 账号解封时间
 }
 
 func (*User) TableName() string {

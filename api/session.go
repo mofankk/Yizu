@@ -1,6 +1,7 @@
 package api
 
 import (
+	"encoding/json"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"time"
@@ -21,11 +22,10 @@ func (*SessionManager) GetAuthCode(c *gin.Context) {
 		code := yizuutil.GenerateCode(6)
 		ok := yizuutil.SendAuthCode(phoneNum, code)
 		if ok {
-			redisStore := yizuutil.GetRedisStore()
-			conn := redisStore.Pool.Get()
-			defer conn.Close()
-			conn.Do("SET", phoneNum, code)
-			conn.Do("EXPIRE", phoneNum, 6 * time.Minute)
+			redis := yizuutil.GetRedis()
+			defer redis.Close()
+			ctx := redis.Context()
+			redis.Set(ctx, phoneNum, code, 6 * time.Minute)
 			c.JSON(http.StatusOK, gin.H{
 				"code": 0,
 				"msg": "验证码发送成功",
@@ -51,14 +51,14 @@ func (*SessionManager) Login(c *gin.Context) {
 	password := c.PostForm("password")
 	// 采用手机号登陆
 	if phoneNum != "" && code != "" && username == "" && password == ""{
-		redisStore := yizuutil.GetRedisStore()
-		conn := redisStore.Pool.Get()
-		defer conn.Close()
-		cc, err := conn.Do("GET", phoneNum)
+		redis := yizuutil.GetRedis()
+		defer redis.Close()
+		ctx := redis.Context()
+		val, err := redis.Get(ctx, phoneNum).Result()
 		if err != nil {
 			c.JSON(http.StatusBadRequest, modules.ArgErr())
 		} else {
-			if cc.(string) == code { // 登陆成功
+			if val == code { // 登陆成功
 				db, err := yizuutil.GetDB()
 				if err != nil {
 					c.JSON(http.StatusInternalServerError, modules.SysErr())
@@ -67,10 +67,12 @@ func (*SessionManager) Login(c *gin.Context) {
 				userInfo := &modules.User{}
 				num := db.Where(modules.User{Phone: phoneNum}).First(userInfo).RowsAffected
 				if num == 0 {
-
+					c.JSON(http.StatusBadRequest, modules.LoginFail())
 				} else {
-					ok := service.LoginSuccess(userInfo)
+					key := yizuutil.GenerateCode(20)
+					ok := service.LoginSuccess(key, userInfo)
 					if ok {
+						c.SetCookie("session.id", key, 2592000, "/", "", false, false)
 						c.JSON(http.StatusOK, modules.LoginSuccess())
 					} else {
 						c.JSON(http.StatusOK, modules.LoginFail())
@@ -99,8 +101,10 @@ func (*SessionManager) Login(c *gin.Context) {
 			})
 			return
 		} else { //登陆成功
-			ok := service.LoginSuccess(userInfo)
+			key := yizuutil.GenerateCode(20)
+			ok := service.LoginSuccess(key, userInfo)
 			if ok {
+				c.SetCookie("session.id", key, 2592000, "/", "", false, false)
 				c.JSON(http.StatusOK, modules.LoginSuccess())
 			} else {
 				c.JSON(http.StatusOK, modules.LoginFail())
@@ -113,7 +117,15 @@ func (*SessionManager) Login(c *gin.Context) {
 
 // Logout 用户退出
 func (*SessionManager) Logout(c *gin.Context) {
-
+	key, err := c.Cookie("session.id")
+	if err != nil {
+		c.JSON(http.StatusBadRequest, modules.Failure())
+	} else {
+		rdb := yizuutil.GetRedis()
+		ctx := rdb.Context()
+		rdb.Del(ctx, key)
+		c.JSON(http.StatusOK, modules.Success())
+	}
 }
 
 // Register 用户注册
@@ -125,5 +137,30 @@ func (*SessionManager) Register(c *gin.Context) {
 // Logoff 注销-将用户里的存活状态改成注销
 // 不删除与用户相关联的所有数据
 func (*SessionManager) Logoff(c *gin.Context) {
-
+	key, err := c.Cookie("session.id")
+	if err != nil {
+		c.JSON(http.StatusBadRequest, modules.Failure())
+	} else {
+		rdb := yizuutil.GetRedis()
+		ctx := rdb.Context()
+		k, _ := rdb.Get(ctx, key).Bytes()
+		if k == nil {
+			c.JSON(http.StatusBadRequest, modules.ArgErr())
+			return
+		}
+		cacheInfo := modules.CacheInfo{}
+		json.Unmarshal(k, &cacheInfo)
+		db, err := yizuutil.GetDB()
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, modules.Failure())
+			return
+		}
+		err = db.Where(modules.User{Id: cacheInfo.UserId}).Update("status", 2).Error
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, modules.Failure())
+			return
+		}
+		rdb.Del(ctx, key)
+		c.JSON(http.StatusOK, modules.Success())
+	}
 }

@@ -10,10 +10,9 @@ import (
 )
 
 type redisConfig struct {
-	Size     int
 	Address  string
 	Password string
-	DB       string
+	DB       int
 }
 
 type postgresConfig struct {
@@ -41,10 +40,9 @@ func ServerConfig() *Config{
 	once.Do(func() {
 		config = &Config{}
 		r := redisConfig{
-			Size:     30,
 			Address:  "152.136.114.51:923",
 			Password: "Cx330$2021.@",
-			DB:       "0",
+			DB:       0,
 		}
 		p := postgresConfig{
 			Username: "baitong",
@@ -55,10 +53,12 @@ func ServerConfig() *Config{
 		}
 		config.RdConfig = r
 		config.PgConfig = p
-		config.HouseImgUrl = filepath.Join(os.Getenv("PWD"), "house_image")
-		config.HouseImgPath = filepath.Join("./", "house_image_path")
-		config.AvatarUrl = filepath.Join("./", "avatar")
+		config.HouseImgUrl = filepath.Join(os.Getenv(".."), "house_image")
+		config.HouseImgPath = filepath.Join("..", "house_image_path")
+		config.AvatarUrl = filepath.Join("..", "avatar")
 		config.Port = "2017"
+
+		config.SaveToFile()
 
 		file, err := os.Open("server_config.json")
 		if err != nil {
@@ -71,15 +71,13 @@ func ServerConfig() *Config{
 		if err != nil {
 			log.Errorf("JSON解析失败: %v", err)
 		}
-
-		config.SaveToFile()
 	})
 
 	return config
 }
 
 func (*Config) SaveToFile() {
-	file, _ := os.Create("conf/server_config.json")
+	file, _ := os.Create("server_config.json")
 	defer file.Close()
 	enc := json.NewEncoder(file)
 	enc.SetIndent("", "\t")

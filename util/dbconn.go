@@ -1,16 +1,12 @@
 package yizuutil
 
 import (
+	"github.com/go-redis/redis/v8"
 	log "github.com/sirupsen/logrus"
-	"gopkg.in/boj/redistore.v1"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
-	"sync"
 	"yizu/conf"
 )
-
-var store *redistore.RediStore
-var once sync.Once
 
 func GetDB() (*gorm.DB, error) {
 
@@ -29,22 +25,11 @@ func GetDB() (*gorm.DB, error) {
 	return db, err
 }
 
-func init() {
-	once.Do(func() {
-		var err error
-		store, err = redistore.NewRediStoreWithDB(
-			conf.ServerConfig().RdConfig.Size,
-			"tcp",
-			conf.ServerConfig().RdConfig.Address,
-			conf.ServerConfig().RdConfig.Password,
-			conf.ServerConfig().RdConfig.DB,
-		)
-		if err != nil {
-			log.Errorf("Redis创建失败: %v", err)
-		}
+func GetRedis() *redis.Client {
+	rdb := redis.NewClient(&redis.Options{
+		Addr:     conf.ServerConfig().RdConfig.Address,
+		Password: conf.ServerConfig().RdConfig.Password,
+		DB:       conf.ServerConfig().RdConfig.DB,
 	})
-}
-
-func GetRedisStore() *redistore.RediStore {
-	return store
+	return rdb
 }

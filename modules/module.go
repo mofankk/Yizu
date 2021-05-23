@@ -27,4 +27,9 @@ type CacheInfo struct {
 	HouseCity     string // 市
 	HouseDistrict string // 区
 	HouseStreet   string // 街道
+
+	RoleType int    // 用户角色信息
+	UserId   string // 用户ID
+	Username string // 用户名
+	Password string // 用户密码
 }
