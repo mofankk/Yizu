@@ -52,8 +52,8 @@ type ResultInfo struct {
 
 func QuerySuccess() ResultInfo {
 	x := ResultInfo{
-		Code: 1,
-		Msg:  "修改失败",
+		Code: 0,
+		Msg:  "查询成功",
 		Result: nil,
 	}
 	return x

@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"yizu/modules"
+	"yizu/service"
 	"yizu/util"
 )
 
@@ -17,7 +18,21 @@ type HouseManager struct {
 
 // List 获取房源列表
 func (*HouseManager) List(c *gin.Context) {
-
+	arg := &modules.HouseQueryArg{}
+	if err := c.ShouldBind(arg); err != nil {
+		c.JSON(http.StatusBadRequest, modules.ArgErr())
+		return
+	}
+	db, err := yizuutil.GetDB()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, modules.SysErr())
+		return
+	}
+	s := service.HouseService{}
+	info := s.QueryHouseList(arg, db)
+	res := modules.QuerySuccess()
+	res.Result = info
+	c.JSON(http.StatusOK, res)
 }
 
 func (*HouseManager) Delete(c *gin.Context) {

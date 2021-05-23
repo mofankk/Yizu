@@ -57,9 +57,9 @@ func (*HouseHistory) TableName() string {
 	return "house_history"
 }
 
-// HouseQueryCondition 房源列表查询条件
+// HouseQueryArg 房源列表查询条件
 // 后期可以设置多个街道或者标志性建筑这种查询条件
-type HouseQueryCondition struct {
+type HouseQueryArg struct {
 	Province string `json:"province"` // 省
 	City     string `json:"city"`     // 市
 	District string `json:"district"` // 区

@@ -2,12 +2,14 @@ package router
 
 import (
 	"github.com/gin-gonic/gin"
+	log "github.com/sirupsen/logrus"
 	"yizu/api"
+	"yizu/conf"
 )
 
 func Run() {
 
-	u := api.UserManager{}
+	//u := api.UserManager{}
 	h := api.HouseManager{}
 	s := api.ScanHistory{}
 	hi := api.HiGin{}
@@ -16,9 +18,9 @@ func Run() {
 	router := gin.Default()
 
 	// 登陆注册
-	router.Handle("POST", "/login", u.Login)
-	router.Handle("DELETE", "/logout", u.Logout)
-	router.Handle("DELETE", "/logoff", u.Logoff) //用户注销
+	//router.Handle("POST", "/login", u.Login)
+	//router.Handle("DELETE", "/logout", u.Logout)
+	//router.Handle("DELETE", "/logoff", u.Logoff) //用户注销
 
 	// 房子
 	router.Handle("GET", "/house/list", h.List)
@@ -31,6 +33,6 @@ func Run() {
 
 	router.Handle("GET", "higin", hi.Hello)
 
-	router.Run(":2017")
-
+	log.Info("Yizu启动成功, 服务端口为: ", conf.ServerConfig().Port)
+	router.Run(":" + conf.ServerConfig().Port)
 }

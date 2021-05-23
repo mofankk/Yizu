@@ -7,14 +7,13 @@ import (
 )
 
 // 与数据库同步表结构
-// func init() {
 func init() {
 	for {
 		db, err := yizuutil.GetDB()
 		if err != nil {
 			log.Errorf("PostgreSQL连接失败: %v", err)
 		} else {
-			log.Info("数据库连接成功")
+			log.Info("PostgreSQL连接成功")
 			db.AutoMigrate(
 				&User{},
 				&House{},
@@ -23,7 +22,7 @@ func init() {
 				&UserComment{},
 				&HouseComment{},
 				)
-
+			log.Info("PostgreSQL初始化成功")
 			break
 		}
 		time.Sleep(10 * time.Second)

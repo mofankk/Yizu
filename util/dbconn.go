@@ -25,6 +25,7 @@ func GetDB() (*gorm.DB, error) {
 	if err != nil {
 		log.Errorf("PostgreSQL连接失败: %v", err)
 	}
+	db = db.Debug()
 	return db, err
 }
 

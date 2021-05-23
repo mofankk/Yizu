@@ -28,6 +28,7 @@ type Config struct {
 	HouseImgUrl  string
 	HouseImgPath string
 	AvatarUrl    string
+	Port 		 string //服务运行端口
 }
 
 var config *Config
@@ -55,6 +56,7 @@ func ServerConfig() *Config{
 		config.HouseImgUrl = filepath.Join("..", "h_image")
 		config.HouseImgPath = filepath.Join("..", "h_image_path")
 		config.AvatarUrl = filepath.Join("..", "avatar")
+		config.Port = "2017"
 
 		//file, err := os.Open("server_config.json")
 		//if err != nil {
