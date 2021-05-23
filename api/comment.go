@@ -12,7 +12,6 @@ type CommentManager struct {
 
 // List 获取评论列表
 // 用户浏览到房子，查看完详情后，可以向房东请求展示评论详情
-//
 func (*CommentManager) List(c *gin.Context) {
 
 }

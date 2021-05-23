@@ -1,6 +1,7 @@
 package router
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
 	"yizu/api"
@@ -10,22 +11,22 @@ import (
 func Run() {
 
 	//u := api.UserManager{}
-	h := api.HouseManager{}
 	s := api.ScanHistory{}
 	hi := api.HiGin{}
 
 	gin.SetMode(gin.ReleaseMode)
 	router := gin.Default()
 
+	//router.Use(AuthRequired())
+	//{
+	//	router.Handle("GET", "/house/list", h.List)
+	//}
+
+
 	// 登陆注册
 	//router.Handle("POST", "/login", u.Login)
 	//router.Handle("DELETE", "/logout", u.Logout)
 	//router.Handle("DELETE", "/logoff", u.Logoff) //用户注销
-
-	// 房子
-	router.Handle("GET", "/house/list", h.List)
-	router.Handle("POST", "/house/add", h.Modify)
-	router.Handle("DELETE", "/house/del", h.Delete)
 
 	// 浏览历史
 	router.Handle("GET", "/scan/list", s.List)
@@ -33,6 +34,19 @@ func Run() {
 
 	router.Handle("GET", "higin", hi.Hello)
 
+	houseRouter(router)
+
 	log.Info("Yizu启动成功, 服务端口为: ", conf.ServerConfig().Port)
 	router.Run(":" + conf.ServerConfig().Port)
+}
+
+func AuthRequired() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		x := c.Request.Method
+		if x != "" {
+			fmt.Println(x)
+		} else {
+			fmt.Println("认证失败")
+		}
+	}
 }

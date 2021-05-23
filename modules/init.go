@@ -7,7 +7,7 @@ import (
 )
 
 // 与数据库同步表结构
-func init() {
+func SyncDB() {
 	for {
 		db, err := yizuutil.GetDB()
 		if err != nil {

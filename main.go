@@ -2,12 +2,17 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
-	_ "yizu/modules"
+	log "github.com/sirupsen/logrus"
+	"yizu/modules"
 	"yizu/router"
 )
 
 func main() {
-	//modules.SyncDB() // 注释掉这里是想测试下包多次引入是否多次执行init()
+	log.SetFormatter(&log.TextFormatter{
+		FullTimestamp: true,
+		TimestampFormat: "2006-01-02 15:04:05",
+	})
+	modules.SyncDB()
 	gin.SetMode(gin.DebugMode)
 	router.Run()
 }
