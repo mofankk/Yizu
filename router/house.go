@@ -14,5 +14,6 @@ func houseRouter(r *gin.Engine) {
 	g.Handle("GET", "/list", h.List)
 	g.Handle("POST", "/add", h.Modify)
 	g.Handle("DELETE", "/del", h.Delete)
+	g.Handle("POST", "/upimg", h.UploadImg)
 
 }

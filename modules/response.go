@@ -14,6 +14,13 @@ func Success() ResInfo {
 	}
 }
 
+func Failure() ResInfo {
+	return ResInfo{
+		Code: 1,
+		Msg:  "操作失败",
+	}
+}
+
 func ArgErr() ResInfo {
 	return ResInfo{
 		Code: 1,

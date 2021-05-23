@@ -16,6 +16,8 @@ func Run() {
 
 	gin.SetMode(gin.ReleaseMode)
 	router := gin.Default()
+	// 设置图片上传大小限制
+	router.MaxMultipartMemory = 8 << 20  // 8 MiB
 
 	//router.Use(AuthRequired())
 	//{

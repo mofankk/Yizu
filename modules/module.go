@@ -19,6 +19,8 @@ type Role struct {
 
 // 聊天功能 咨询
 
+// 在线签约模块
+
 // CacheInfo 缓存信息
 type CacheInfo struct {
 	HouseProvince string // 省

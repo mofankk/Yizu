@@ -3,6 +3,7 @@ package api
 import (
 	"encoding/json"
 	"github.com/gin-gonic/gin"
+	log "github.com/sirupsen/logrus"
 	"io/ioutil"
 	"net/http"
 	"yizu/modules"
@@ -93,3 +94,23 @@ func (*HouseManager) GetLocation(c *gin.Context) {
 
 }
 
+// UploadImg 上传房源首页图-单图上传
+func (*HouseManager) UploadImg(c *gin.Context) {
+	file, err := c.FormFile("house_img")
+	if err != nil {
+		c.JSON(http.StatusBadRequest, modules.ArgErr())
+		return
+	}
+	err = c.SaveUploadedFile(file, "./house_img/" + file.Filename) // 需要将文件名入库
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, modules.Failure())
+		log.Errorf("图片保存失败: %v", err)
+	} else {
+		c.JSON(http.StatusOK, modules.Success())
+	}
+}
+
+// UploadMultImg 上传内部详情图-多图上传
+func (*HouseManager) UploadMultImg(c *gin.Context) {
+
+}
