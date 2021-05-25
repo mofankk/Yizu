@@ -3,8 +3,10 @@ package api
 import (
 	"encoding/json"
 	"github.com/gin-gonic/gin"
+	log "github.com/sirupsen/logrus"
 	"net/http"
 	"time"
+	"yizu/conf"
 	"yizu/modules"
 	"yizu/service"
 	yizuutil "yizu/util"
@@ -131,6 +133,38 @@ func (*SessionManager) Logout(c *gin.Context) {
 // Register 用户注册
 // 先获取验证码
 func (*SessionManager) Register(c *gin.Context) {
+	var user modules.RegistInfo
+	err := c.BindJSON(&user)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, modules.ArgErr())
+		return
+	}
+	// 这里可以为了提升网络传输速度单独搞一个验证短信验证码的接口
+	redis := yizuutil.GetRedis()
+	code, _ := redis.Get(redis.Context(), user.Phone).Result()
+	if code != user.AuthCode {
+		c.JSON(http.StatusUnauthorized, modules.ResInfo{
+			Code: 1,
+			Msg:  "验证码错误",
+		})
+		return
+	}
+	file, err := c.FormFile("picture")
+	if err != nil {
+		c.JSON(http.StatusBadRequest, modules.ArgErr())
+		return
+	}
+	err = c.SaveUploadedFile(file, conf.ServerConfig().AvatarUrl)
+	if err != nil {
+		log.Errorf("用户头像保存失败: %v", err)
+	}
+	user.Picture = conf.ServerConfig().AvatarUrl + file.Filename
+	ok := service.RegisterUser(&user)
+	if ok {
+		c.JSON(http.StatusOK, modules.Success())
+	} else {
+		c.JSON(http.StatusBadRequest, modules.Failure())
+	}
 
 }
 

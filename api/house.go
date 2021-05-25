@@ -14,7 +14,6 @@ import (
 )
 
 // 房子管理模块
-
 type HouseManager struct {
 
 }
