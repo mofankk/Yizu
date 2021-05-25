@@ -30,3 +30,13 @@ func (*CommentManager) Delete(c *gin.Context) {
 func (*CommentManager) Add(c *gin.Context) {
 
 }
+
+// CommentForHouse 对房子进行评价
+func CommentForHouse(c *gin.Context) {
+	
+}
+
+// CommentForUser 用户进行评价
+func CommentForUser(c *gin.Context) {
+
+}
