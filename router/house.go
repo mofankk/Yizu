@@ -13,7 +13,8 @@ func houseRouter(r *gin.Engine) {
 	g := r.Group("/house")
 	g.Handle("GET", "/list", h.List)
 	g.Handle("POST", "/add", h.Modify)
-	g.Handle("DELETE", "/del", h.Delete)
 	g.Handle("POST", "/upimg", h.UploadImg)
 	g.Handle("GET", "/detail", h.GetHouse) 	// 查看房子详情
+	g.Handle("GET", "/detail", h.ScanHistory) 	// 查看房子详情
+	g.Handle("DELETE", "/detail", h.DelScanHistory) 	// 查看房子详情
 }

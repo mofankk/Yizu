@@ -33,7 +33,7 @@ func (*HouseManager) List(c *gin.Context) {
 	s := service.HouseService{}
 	info := s.QueryHouseList(arg, db)
 	res := modules.QuerySuccess()
-	res.Result = info
+	res.Data = info
 	c.JSON(http.StatusOK, res)
 }
 
@@ -161,7 +161,7 @@ func (*HouseManager) GetHouse(c *gin.Context) {
 }
 
 // ScanHistory 获取浏览历史
-func ScanHistory(c *gin.Context) {
+func (*HouseManager) ScanHistory(c *gin.Context) {
 	cacheInfo, ok := service.GetCacheInfo(c)
 	if !ok {
 		c.JSON(http.StatusBadRequest, modules.SessionErr())
