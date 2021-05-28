@@ -13,7 +13,7 @@ import (
 	"yizu/util"
 )
 
-// 房子管理模块
+// HouseManager 房子管理模块
 type HouseManager struct {
 
 }
@@ -37,11 +37,11 @@ func (*HouseManager) List(c *gin.Context) {
 	c.JSON(http.StatusOK, res)
 }
 
-func (*HouseManager) Delete(c *gin.Context) {
+//func (*HouseManager) Delete(c *gin.Context) {
+//
+//}
 
-}
-
-// 新建或者更新房子信息
+// Modify 新建或者更新房子信息
 func (*HouseManager) Modify(c *gin.Context) {
 
 	// 房子封面图
@@ -130,5 +130,22 @@ func (*HouseManager) UploadImg(c *gin.Context) {
 
 // UploadMultImg 上传内部详情图-多图上传
 func (*HouseManager) UploadMultImg(c *gin.Context) {
+
+}
+
+// GetHouse 查看房子详情
+// 对应浏览房子详情页操作
+// 要在浏览历史记录中更新
+func (*HouseManager) GetHouse(c *gin.Context) {
+
+}
+
+// ScanHistory 获取浏览历史
+func ScanHistory(c *gin.Context) {
+
+}
+
+// DelScanHistory 删除浏览历史
+func (*HouseManager) DelScanHistory(c *gin.Context) {
 
 }

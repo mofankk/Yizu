@@ -15,5 +15,5 @@ func houseRouter(r *gin.Engine) {
 	g.Handle("POST", "/add", h.Modify)
 	g.Handle("DELETE", "/del", h.Delete)
 	g.Handle("POST", "/upimg", h.UploadImg)
-
+	g.Handle("GET", "/detail", h.GetHouse) 	// 查看房子详情
 }

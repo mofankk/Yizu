@@ -133,3 +133,15 @@ func (*CommentManager) CommentForUser(c *gin.Context) {
 	tx.Commit()
 	c.JSON(http.StatusOK, modules.Success())
 }
+
+// ListForHouse 获取房子的评论列表
+// 这里需要进行鉴权
+func (*CommentManager) ListForHouse(c *gin.Context) {
+
+}
+
+// ListForUser 获取用户的评论列表
+// 这里需要进行鉴权
+func (*CommentManager) ListForUser(c *gin.Context) {
+
+}
