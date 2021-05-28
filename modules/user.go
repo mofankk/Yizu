@@ -13,6 +13,7 @@ type User struct {
 	Birthday      string  `json:"birthday"`                  // 生日
 	SelfIntroduce string  `json:"self_introduce"`            // 自我介绍
 	Score         float32 `json:"score" gorm:"numeric(3,1)"` // 评价得分
+	Times         int 	  `json:"times"` 					 // 被评价次数
 	Picture       string  `json:"picture"`                   // 用户头像
 
 	Name       string `json:"-"`           // 真实姓名

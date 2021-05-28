@@ -75,3 +75,10 @@ func LoginFail() ResInfo {
 		"登陆失败",
 	}
 }
+
+func NoRecord() ResInfo {
+	return ResInfo{
+		1,
+		"没有找到该记录",
+	}
+}

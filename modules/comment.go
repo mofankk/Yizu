@@ -34,3 +34,5 @@ func (*UserComment) TableName() string {
 func (*HouseComment) TableName() string {
 	return "house_comment"
 }
+
+
