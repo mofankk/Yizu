@@ -137,15 +137,73 @@ func (*HouseManager) UploadMultImg(c *gin.Context) {
 // 对应浏览房子详情页操作
 // 要在浏览历史记录中更新
 func (*HouseManager) GetHouse(c *gin.Context) {
+	houseId := c.Query("id")
+	// 参数检查
+	if houseId == "" {
+		c.JSON(http.StatusBadRequest, modules.ArgErr())
+		return
+	}
 
+	db, err := yizuutil.GetDB()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, modules.SysErr())
+		return
+	}
+	var house modules.House
+	err = db.Where("id = ?", houseId).Find(&house).Error
+	if err != nil {
+		c.JSON(http.StatusBadRequest, modules.SysErr())
+		return
+	}
+	res := modules.ResultInfo{}
+	res.Data = house
+	c.JSON(http.StatusOK, res)
 }
 
 // ScanHistory 获取浏览历史
 func ScanHistory(c *gin.Context) {
+	cacheInfo, ok := service.GetCacheInfo(c)
+	if !ok {
+		c.JSON(http.StatusBadRequest, modules.SessionErr())
+	}
+	userId := cacheInfo.UserId
 
+	db, err := yizuutil.GetDB()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, modules.SysErr())
+		return
+	}
+	var list []modules.HouseHistory
+	err = db.Where("user_id = ?", userId).Find(&list).Error
+	if err != nil {
+		c.JSON(http.StatusBadRequest, modules.Failure())
+		return
+	}
+	res := modules.ResultInfo{}
+	res.Data = list
+	c.JSON(http.StatusOK, res)
 }
 
 // DelScanHistory 删除浏览历史
 func (*HouseManager) DelScanHistory(c *gin.Context) {
+	houseId := c.Query("id")
+	// 参数检查
+	if houseId == "" {
+		c.JSON(http.StatusBadRequest, modules.ArgErr())
+		return
+	}
 
+	db, err := yizuutil.GetDB()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, modules.SysErr())
+		return
+	}
+
+	// 从列表查出来的houseId不存在在删除的时候查找失败的情况
+	err = db.Model(&modules.HouseHistory{}).Delete("id = ?", houseId).Error
+	if err != nil {
+		c.JSON(http.StatusBadRequest, modules.Failure())
+		return
+	}
+	c.JSON(http.StatusOK, modules.Success())
 }

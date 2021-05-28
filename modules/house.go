@@ -7,7 +7,7 @@ type House struct {
 	CreateTime string `json:"create_time"`
 	UpdateTime string `json:"update_time"`
 	DeleteTime string `json:"delete_time"`
-	CreateUser string `json:"create_user"` // 创建人
+	CreateUser string `json:"create_user"` // 创建人,可以理解为房子目前的房东
 
 	Province string `json:"province"` // 省
 	City     string `json:"city"`     // 市
@@ -39,6 +39,7 @@ type HouseDetail struct {
 // HouseHistory 房子浏览历史
 type HouseHistory struct {
 	Id          int     `json:"-" gorm:"primaryKey;AUTO_INCREMENT"`
+	UserId      string  `json:"-"`
 	HouseId     string  `json:"house_id"`
 	ImgUrl      string  `json:"img_url"`
 	Name        string  `json:"name"`

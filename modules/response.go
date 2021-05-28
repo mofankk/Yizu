@@ -50,14 +50,14 @@ func UpdateErr() ResInfo {
 type ResultInfo struct {
 	Code int    `json:"code"`
 	Msg  string `json:"msg"`
-	Result interface{} `json:"result"`
+	Data interface{} `json:"data"`
 }
 
 func QuerySuccess() ResultInfo {
 	x := ResultInfo{
 		Code: 0,
 		Msg:  "查询成功",
-		Result: nil,
+		Data: nil,
 	}
 	return x
 }
@@ -80,5 +80,19 @@ func NoRecord() ResInfo {
 	return ResInfo{
 		1,
 		"没有找到该记录",
+	}
+}
+
+func CookieErr() ResInfo {
+	return ResInfo{
+		1,
+		"请携带Cookie请求",
+	}
+}
+
+func SessionErr() ResInfo {
+	return ResInfo{
+		1,
+		"没有Session, 请重新登陆",
 	}
 }
