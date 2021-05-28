@@ -11,7 +11,6 @@ import (
 func Run() {
 
 	//u := api.UserManager{}
-	s := api.ScanHistory{}
 	hi := api.HiGin{}
 
 	gin.SetMode(gin.ReleaseMode)
@@ -30,13 +29,14 @@ func Run() {
 	//router.Handle("DELETE", "/logout", u.Logout)
 	//router.Handle("DELETE", "/logoff", u.Logoff) //用户注销
 
-	// 浏览历史
-	router.Handle("GET", "/scan/list", s.List)
-	router.Handle("DELETE", "/scan/del", s.Delete)
 
 	router.Handle("GET", "higin", hi.Hello)
 
+	// 路由注册
 	houseRouter(router)
+	userRouter(router)
+	commentRouter(router)
+
 
 	log.Info("Yizu启动成功, 服务端口为: ", conf.ServerConfig().Port)
 	router.Run(":" + conf.ServerConfig().Port)

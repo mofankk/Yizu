@@ -13,7 +13,30 @@ import (
 )
 
 type SessionManager struct {
+}
 
+// AuthCode 校验验证码
+func (*SessionManager) AuthCode(c *gin.Context) {
+	phoneNum := c.PostForm("phone_num")
+	code := c.PostForm("code")
+	if phoneNum != "" && code != "" {
+		redis := yizuutil.GetRedis()
+		defer redis.Close()
+		x, e := redis.Get(redis.Context(), phoneNum).Result()
+		if e != nil || x != code {
+			c.JSON(http.StatusOK, gin.H{
+				"code": 1,
+				"msg":  "验证码错误",
+			})
+		} else {
+			c.JSON(http.StatusOK, gin.H{
+				"code": 0,
+				"msg":  "验证成功",
+			})
+		}
+	} else {
+		c.JSON(http.StatusBadRequest, modules.ArgErr())
+	}
 }
 
 // GetAuthCode 获取短信验证码
@@ -27,15 +50,15 @@ func (*SessionManager) GetAuthCode(c *gin.Context) {
 			redis := yizuutil.GetRedis()
 			defer redis.Close()
 			ctx := redis.Context()
-			redis.Set(ctx, phoneNum, code, 6 * time.Minute)
+			redis.Set(ctx, phoneNum, code, 6*time.Minute)
 			c.JSON(http.StatusOK, gin.H{
 				"code": 0,
-				"msg": "验证码发送成功",
+				"msg":  "验证码发送成功",
 			})
 		} else {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"code": 1,
-				"msg": "验证码发送失败, 请检查手机号是否正确或稍后再试",
+				"msg":  "验证码发送失败, 请检查手机号是否正确或稍后再试",
 			})
 		}
 	} else {
@@ -52,7 +75,7 @@ func (*SessionManager) Login(c *gin.Context) {
 	username := c.PostForm("username")
 	password := c.PostForm("password")
 	// 采用手机号登陆
-	if phoneNum != "" && code != "" && username == "" && password == ""{
+	if phoneNum != "" && code != "" && username == "" && password == "" {
 		redis := yizuutil.GetRedis()
 		defer redis.Close()
 		ctx := redis.Context()
