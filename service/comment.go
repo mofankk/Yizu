@@ -1,6 +1,9 @@
 package service
 
-import "yizu/modules"
+import (
+	"yizu/modules"
+	yizuutil "yizu/util"
+)
 
 // CountHouseScore 计算房子的评分
 func CountHouseScore(c *modules.HouseComment) float32 {
@@ -13,6 +16,12 @@ func CountHouseScore(c *modules.HouseComment) float32 {
 
 // CheckScanPerm 检查浏览权限
 func CheckScanPerm(sub, obj string) bool {
+
+	casbin := yizuutil.GetCasbin()
+
+	if ok, _ := casbin.Enforce(sub, obj, "read"); ok {
+		return true
+	}
 
 	return true
 }

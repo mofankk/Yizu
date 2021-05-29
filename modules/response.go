@@ -96,3 +96,17 @@ func SessionErr() ResInfo {
 		"没有Session, 请重新登陆",
 	}
 }
+
+func AuthFail() ResInfo {
+	return ResInfo{
+		1,
+		"没有操作权限",
+	}
+}
+
+func AuthSuccess() ResInfo {
+	return ResInfo{
+		1,
+		"",
+	}
+}

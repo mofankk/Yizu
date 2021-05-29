@@ -9,7 +9,7 @@ func userRouter(r *gin.Engine) {
 
 	u := api.UserManager{}
 
-	// 房子
+	// 用户模块
 	g := r.Group("/user")
 	g.Handle("GET", "/update", u.Update) // 修改用户信息，如果修改手机号需要先进行验证
 

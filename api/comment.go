@@ -1,7 +1,9 @@
 package api
 
 import (
+	"encoding/json"
 	"github.com/gin-gonic/gin"
+	"github.com/prometheus/common/log"
 	"gorm.io/gorm"
 	"net/http"
 	"yizu/modules"
@@ -137,11 +139,83 @@ func (*CommentManager) CommentForUser(c *gin.Context) {
 // ListForHouse 获取房子的评论列表
 // 这里需要进行鉴权
 func (*CommentManager) ListForHouse(c *gin.Context) {
+	cookie, err := c.Cookie("session.id")
+	if err != nil {
+		c.JSON(http.StatusNonAuthoritativeInfo, modules.SessionErr())
+		return
+	}
+	houseId := c.PostForm("house_id")
 
+	redis := yizuutil.GetRedis()
+	cacheInfo, err := redis.Get(redis.Context(), cookie).Result()
+	if err != nil {
+		c.JSON(http.StatusNonAuthoritativeInfo, modules.SessionErr())
+		return
+	}
+	var cache modules.CacheInfo
+	json.Unmarshal([]byte(cacheInfo), &cache)
+
+	ok := service.CheckScanPerm(cache.UserId, houseId)
+	if !ok {
+		c.JSON(http.StatusBadRequest, modules.AuthFail())
+		log.Debugf("%s 没有查看 %s 的权限", cache.UserId, houseId)
+		return
+	}
+
+	db, err := yizuutil.GetDB()
+	if err  != nil {
+		c.JSON(http.StatusBadRequest, modules.SysErr())
+		return
+	}
+	var comments []modules.HouseComment
+	err = db.Where(&modules.HouseComment{HouseId: houseId}).Find(&comments).Error
+	if err != nil {
+		c.JSON(http.StatusServiceUnavailable, modules.SysErr())
+		return
+	}
+	res := modules.QuerySuccess()
+	res.Data = comments
+	c.JSON(http.StatusOK, res)
 }
 
 // ListForUser 获取用户的评论列表
 // 这里需要进行鉴权
 func (*CommentManager) ListForUser(c *gin.Context) {
+	cookie, err := c.Cookie("session.id")
+	if err != nil {
+		c.JSON(http.StatusNonAuthoritativeInfo, modules.SessionErr())
+		return
+	}
+	userId := c.PostForm("user_id")
 
+	redis := yizuutil.GetRedis()
+	cacheInfo, err := redis.Get(redis.Context(), cookie).Result()
+	if err != nil {
+		c.JSON(http.StatusNonAuthoritativeInfo, modules.SessionErr())
+		return
+	}
+	var cache modules.CacheInfo
+	json.Unmarshal([]byte(cacheInfo), &cache)
+
+	ok := service.CheckScanPerm(cache.UserId, userId)
+	if !ok {
+		c.JSON(http.StatusBadRequest, modules.AuthFail())
+		log.Debugf("%s 没有查看 %s 的权限", cache.UserId, userId)
+		return
+	}
+
+	db, err := yizuutil.GetDB()
+	if err  != nil {
+		c.JSON(http.StatusBadRequest, modules.SysErr())
+		return
+	}
+	var comments []modules.UserComment
+	err = db.Where(&modules.UserComment{UserId: userId}).Find(&comments).Error
+	if err != nil {
+		c.JSON(http.StatusServiceUnavailable, modules.SysErr())
+		return
+	}
+	res := modules.QuerySuccess()
+	res.Data = comments
+	c.JSON(http.StatusOK, res)
 }
