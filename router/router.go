@@ -24,15 +24,10 @@ func Run() {
 	//}
 
 
-	// 登陆注册
-	//router.Handle("POST", "/login", u.Login)
-	//router.Handle("DELETE", "/logout", u.Logout)
-	//router.Handle("DELETE", "/logoff", u.Logoff) //用户注销
-
-
 	router.Handle("GET", "higin", hi.Hello)
 
 	// 路由注册
+	sessionRouter(router)
 	houseRouter(router)
 	userRouter(router)
 	commentRouter(router)

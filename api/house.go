@@ -37,10 +37,6 @@ func (*HouseManager) List(c *gin.Context) {
 	c.JSON(http.StatusOK, res)
 }
 
-//func (*HouseManager) Delete(c *gin.Context) {
-//
-//}
-
 // Modify 新建或者更新房子信息
 func (*HouseManager) Modify(c *gin.Context) {
 
@@ -112,24 +108,6 @@ func (*HouseManager) SetLocation(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, modules.ArgErr())
 		return
 	}
-
-}
-
-// GetLocation 获取地理位置信息
-// 在每次浏览房源的时候获取一下, 用于显示已配置过的信息
-func (*HouseManager) GetLocation(c *gin.Context) {
-
-}
-
-// UploadImg 上传房源首页图-单图上传
-func (*HouseManager) UploadImg(c *gin.Context) {
-
-
-
-}
-
-// UploadMultImg 上传内部详情图-多图上传
-func (*HouseManager) UploadMultImg(c *gin.Context) {
 
 }
 

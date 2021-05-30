@@ -38,8 +38,4 @@ func SendAuthCode(phoneNum, captcha string) bool {
 		return false
 	}
 	return true
-	//if err != nil {
-	//	panic(err)
-	//}
-	//fmt.Printf("%s", response.ToJsonString())
 }

@@ -17,24 +17,8 @@ type CommentManager struct {
 
 }
 
-// List 获取评论列表
-// 用户浏览到房子，查看完详情后，可以向房东请求展示评论详情
-func (*CommentManager) List(c *gin.Context) {
-
-}
-
-// Update 更新评论
-func (*CommentManager) Update(c *gin.Context) {
-
-}
-
 // Delete 删除评论-只有管理员才能做
 func (*CommentManager) Delete(c *gin.Context) {
-
-}
-
-// Add 新增评论
-func (*CommentManager) Add(c *gin.Context) {
 
 }
 
@@ -168,6 +152,7 @@ func (*CommentManager) ListForHouse(c *gin.Context) {
 		return
 	}
 	var comments []modules.HouseComment
+	// TODO 如果没有查到记录，这个Err会不会不为空
 	err = db.Where(&modules.HouseComment{HouseId: houseId}).Find(&comments).Error
 	if err != nil {
 		c.JSON(http.StatusServiceUnavailable, modules.SysErr())
@@ -210,6 +195,7 @@ func (*CommentManager) ListForUser(c *gin.Context) {
 		return
 	}
 	var comments []modules.UserComment
+	// TODO 如果没有查到记录，这个Err会不会不为空
 	err = db.Where(&modules.UserComment{UserId: userId}).Find(&comments).Error
 	if err != nil {
 		c.JSON(http.StatusServiceUnavailable, modules.SysErr())
