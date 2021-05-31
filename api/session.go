@@ -148,6 +148,8 @@ func (*SessionManager) Logout(c *gin.Context) {
 		rdb := yizuutil.GetRedis()
 		ctx := rdb.Context()
 		rdb.Del(ctx, key)
+		cookie, _ := c.Cookie("session.id")
+		c.SetCookie("session.id", cookie, -1, "/", "localhost", false, true)
 		c.JSON(http.StatusOK, modules.Success())
 	}
 }
