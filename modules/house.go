@@ -27,6 +27,7 @@ type House struct {
 	Description string  `json:"description"`               // 房屋简介
 }
 
+
 // HouseDetail 房子详情
 type HouseDetail struct {
 	Id       string `json:"id" gorm:"primaryKey"`
