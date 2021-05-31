@@ -213,12 +213,10 @@ func (*CommentManager) ListForUser(c *gin.Context) {
 	c.JSON(http.StatusOK, res)
 }
 
-// 申请查看用户的评论列表
 
-// 授权查看（可以与不可以）
 
 // 申请查看房子的评论列表
 
 // 查看房子的评论列表（房东自动允许)
 
-// 获取需要授权的消息
+
