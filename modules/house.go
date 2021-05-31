@@ -39,7 +39,7 @@ type HouseDetail struct {
 
 // HouseHistory 房子浏览历史
 type HouseHistory struct {
-	Id          int     `json:"-" gorm:"primaryKey;AUTO_INCREMENT"`
+	Id          int     `gorm:"primaryKey;AUTO_INCREMENT"`
 	UserId      string  `json:"-"`
 	HouseId     string  `json:"house_id"`
 	ImgUrl      string  `json:"img_url"`
@@ -47,6 +47,7 @@ type HouseHistory struct {
 	Rent        float32 `json:"rent" gorm:"type:numeric(5,2)"` // 每月租金
 	PayCycle    string  `json:"pay_cycle"`                     // 支付周期(月付、季付、年付)
 	Description string  `json:"description"`                   // 房屋简介
+	CreateTime  string  `json:"create_time"`				   // 浏览历史的创建时间
 }
 
 func (*House) TableName() string {

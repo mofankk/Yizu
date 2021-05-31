@@ -8,6 +8,7 @@ import (
 	"gorm.io/gorm"
 	"io/ioutil"
 	"net/http"
+	"time"
 	"yizu/modules"
 	"yizu/service"
 	"yizu/util"
@@ -154,7 +155,9 @@ func (*HouseManager) GetHouse(c *gin.Context) {
 	}
 	var info modules.CacheInfo
 	json.Unmarshal([]byte(cache), &info)
+	his.HouseId = houseId
 	his.UserId = info.UserId
+	his.CreateTime = time.Now().Format("2006-01-02 15:04:05")
 	err = db.Create(&his).Error
 	if err != nil {
 		log.Errorf("更新浏览历史失败 %v", err)
@@ -179,7 +182,8 @@ func (*HouseManager) ScanHistory(c *gin.Context) {
 		return
 	}
 	var list []modules.HouseHistory
-	err = db.Where("user_id = ?", userId).Find(&list).Error
+	// 让最后一次查看的房子在浏览历史记录的最上面，通过使用house_id分组排除重复记录
+	err = db.Table("house_history").Where("user_id = ?", userId).Order("create_time desc").Find(&list).Group("house_id").Error
 	if err != nil {
 		c.JSON(http.StatusBadRequest, modules.Failure())
 		return

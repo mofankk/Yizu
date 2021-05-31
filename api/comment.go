@@ -48,6 +48,11 @@ func (*CommentManager) CommentForHouse(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, modules.SysErr())
 		return
 	}
+	var house modules.House
+	if db.Model(&modules.House{}).Where("id = ?", hc.HouseId).First(&house); house.Id == "" {
+		c.JSON(http.StatusOK, modules.NoRecord())
+		return
+	}
 	tx := db.Begin()
 	err = tx.Create(&hc).Error
 	if err != nil {
