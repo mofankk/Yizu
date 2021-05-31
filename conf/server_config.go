@@ -56,7 +56,7 @@ func ServerConfig() *Config{
 		config.HouseImgUrl = filepath.Join(os.Getenv(".."), "house_image")
 		config.HouseImgPath = filepath.Join("..", "house_image_path")
 		config.AvatarUrl = filepath.Join("..", "avatar")
-		config.Port = "2017"
+		config.Port = "8081"
 
 		config.SaveToFile()
 

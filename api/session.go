@@ -3,10 +3,8 @@ package api
 import (
 	"encoding/json"
 	"github.com/gin-gonic/gin"
-	log "github.com/sirupsen/logrus"
 	"net/http"
 	"time"
-	"yizu/conf"
 	"yizu/modules"
 	"yizu/service"
 	yizuutil "yizu/util"
@@ -71,7 +69,7 @@ func (*SessionManager) GetAuthCode(c *gin.Context) {
 // 2.采用用户名加密码方式登陆
 func (*SessionManager) Login(c *gin.Context) {
 	phoneNum := c.PostForm("phone_num")
-	code := c.PostForm("auth_code")
+	code := c.PostForm("code")
 	username := c.PostForm("username")
 	password := c.PostForm("password")
 	// 采用手机号登陆
@@ -157,7 +155,7 @@ func (*SessionManager) Logout(c *gin.Context) {
 // 先获取验证码
 func (*SessionManager) Register(c *gin.Context) {
 	var user modules.RegistInfo
-	err := c.BindJSON(&user)
+	err := c.ShouldBind(&user)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, modules.ArgErr())
 		return
@@ -172,16 +170,17 @@ func (*SessionManager) Register(c *gin.Context) {
 		})
 		return
 	}
-	file, err := c.FormFile("picture")
-	if err != nil {
-		c.JSON(http.StatusBadRequest, modules.ArgErr())
-		return
-	}
-	err = c.SaveUploadedFile(file, conf.ServerConfig().AvatarUrl)
-	if err != nil {
-		log.Errorf("用户头像保存失败: %v", err)
-	}
-	user.Picture = conf.ServerConfig().AvatarUrl + file.Filename
+	// TODO 头像上传有问题
+	//file, err := c.FormFile("picture")
+	//if err != nil {
+	//	c.JSON(http.StatusBadRequest, modules.ArgErr())
+	//	return
+	//}
+	//err = c.SaveUploadedFile(file, conf.ServerConfig().AvatarUrl)
+	//if err != nil {
+	//	log.Errorf("用户头像保存失败: %v", err)
+	//}
+	//user.Picture = conf.ServerConfig().AvatarUrl + file.Filename
 	ok := service.RegisterUser(&user)
 	if ok {
 		c.JSON(http.StatusOK, modules.Success())

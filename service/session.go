@@ -22,7 +22,7 @@ func LoginSuccess(key string, user *modules.User) bool {
 	rdb := yizuutil.GetRedis()
 	ctx := rdb.Context()
 	err := rdb.SetEX(ctx, key, b, 43200 * time.Minute).Err()
-	if err != nil {
+	if err == nil {
 		return true
 	}
 

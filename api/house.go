@@ -143,6 +143,7 @@ func (*HouseManager) ScanHistory(c *gin.Context) {
 	cacheInfo, ok := service.GetCacheInfo(c)
 	if !ok {
 		c.JSON(http.StatusBadRequest, modules.SessionErr())
+		return
 	}
 	userId := cacheInfo.UserId
 

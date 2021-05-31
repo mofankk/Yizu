@@ -13,7 +13,7 @@ type User struct {
 	Birthday      string  `json:"birthday"`                  // 生日
 	SelfIntroduce string  `json:"self_introduce"`            // 自我介绍
 	Score         float32 `json:"score" gorm:"numeric(3,1)"` // 评价得分
-	Times         int 	  `json:"times"` 					 // 被评价次数
+	Times         int     `json:"times"`                     // 被评价次数
 	Picture       string  `json:"picture"`                   // 用户头像
 
 	Name       string `json:"-"`           // 真实姓名
@@ -29,7 +29,7 @@ func (*User) TableName() string {
 // 用户注册需要得信息
 type RegistInfo struct {
 	NickName string `json:"nick_name"`           // 用户昵称
-	Picture  string `json:"picture"`             // 用户头像
+	Picture  string `json:"_"`                   // 用户头像 // 单独当文件上传
 	Phone    string `json:"phone" gorm:"unique"` // 用户手机号
 	Role     int    `json:"role"`                // 用户角色	1-管理员 2-普通浏览用户 3-房东 4-房东认证后的用户
 	Age      int    `json:"age"`                 // 年龄
