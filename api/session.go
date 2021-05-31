@@ -67,6 +67,7 @@ func (*SessionManager) GetAuthCode(c *gin.Context) {
 // Login 用户登陆
 // 1.采用手机加验证码方式登陆
 // 2.采用用户名加密码方式登陆
+// 登陆成功删除Redis中的手机号缓存
 func (*SessionManager) Login(c *gin.Context) {
 	phoneNum := c.PostForm("phone_num")
 	code := c.PostForm("code")

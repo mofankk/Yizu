@@ -1,6 +1,7 @@
 package api
 
 import (
+	"encoding/json"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"yizu/modules"
@@ -9,6 +10,38 @@ import (
 
 type UserManager struct {
 
+}
+
+// Info 获取用户信息（资料页）
+func (*UserManager) Info(c *gin.Context) {
+	cookie, err := c.Cookie("session.id")
+	if err != nil {
+		c.JSON(http.StatusNonAuthoritativeInfo, modules.SessionErr())
+		return
+	}
+
+	redis := yizuutil.GetRedis()
+
+	cache, err := redis.Get(redis.Context(), cookie).Result()
+	if err != nil {
+		c.JSON(http.StatusNonAuthoritativeInfo, modules.SessionErr())
+		return
+	}
+	var info modules.CacheInfo
+	json.Unmarshal([]byte(cache), &info)
+
+	db, err := yizuutil.GetDB()
+	if err != nil {
+		c.JSON(http.StatusServiceUnavailable, modules.SysErr())
+		return
+	}
+	var user modules.User
+	err = db.Where(&modules.User{Id: info.UserId}).First(&user).Error
+	if err != nil {
+		c.JSON(http.StatusServiceUnavailable, modules.SysErr())
+		return
+	}
+	c.JSON(http.StatusOK, user)
 }
 
 // Update 用户信息修改
