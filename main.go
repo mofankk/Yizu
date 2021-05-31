@@ -5,6 +5,7 @@ import (
 	log "github.com/sirupsen/logrus"
 	"yizu/modules"
 	"yizu/router"
+	yizuutil "yizu/util"
 )
 
 func main() {
@@ -14,5 +15,6 @@ func main() {
 	})
 	modules.SyncDB()
 	gin.SetMode(gin.DebugMode)
+	yizuutil.InitCasbin()
 	router.Run()
 }

@@ -66,6 +66,7 @@ func (*CommentManager) CommentForHouse(c *gin.Context) {
 }
 
 // CommentForUser 用户进行评价
+// 每次更新都会对用户信息中的分数进行重新计算，基于用户表中的被打分次数
 func (*CommentManager) CommentForUser(c *gin.Context) {
 	var uc modules.UserComment
 	err := c.ShouldBind(&uc)
@@ -92,6 +93,7 @@ func (*CommentManager) CommentForUser(c *gin.Context) {
 	tx := db.Begin()
 	var user modules.User
 	err = tx.Where(&modules.User{Id: uc.UserId}).First(&user).Error
+	// gorm.ErrRecordNotFound 这个问题要告知前端
 	if err == gorm.ErrRecordNotFound {
 		c.JSON(http.StatusOK, modules.NoRecord())
 		tx.Rollback()
@@ -195,7 +197,7 @@ func (*CommentManager) ListForUser(c *gin.Context) {
 		return
 	}
 	var comments []modules.UserComment
-	// TODO 如果没有查到记录，这个Err会不会不为空
+	// 如果没有查到记录，这个Err会不会不为空, 答案是不会
 	err = db.Where(&modules.UserComment{UserId: userId}).Find(&comments).Error
 	if err != nil {
 		c.JSON(http.StatusServiceUnavailable, modules.SysErr())
@@ -205,3 +207,13 @@ func (*CommentManager) ListForUser(c *gin.Context) {
 	res.Data = comments
 	c.JSON(http.StatusOK, res)
 }
+
+// 申请查看用户的评论列表
+
+// 授权查看（可以与不可以）
+
+// 申请查看房子的评论列表
+
+// 查看房子的评论列表（房东自动允许)
+
+// 获取需要授权的消息

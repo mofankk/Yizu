@@ -1,5 +1,11 @@
 package modules
 
+import (
+	"github.com/google/uuid"
+	"gorm.io/gorm"
+	"time"
+)
+
 // User 用户表
 type User struct {
 	Id            string  `json:"id" gorm:"primaryKey"`
@@ -24,6 +30,15 @@ type User struct {
 
 func (*User) TableName() string {
 	return "user"
+}
+
+// BeforeCreate 用户注册时生成一些字符填充关键字段
+func (u *User) BeforeCreate(tx *gorm.DB) (err error) {
+	u.Id = uuid.New().String()
+	nt := time.Now().Format("2006-01-02 15:04:05")
+	u.Username = uuid.New().String()
+	u.Password = nt
+	return
 }
 
 // 用户注册需要得信息
