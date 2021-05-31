@@ -16,9 +16,9 @@ type House struct {
 
 	Rooms int `json:"rooms"` // 卧室数量
 
-	Rent     float32 `json:"rent" gorm:"type:numeric(5,2)"`    // 月租金
+	Rent     float32 `json:"rent" gorm:"type:numeric(8,2)"`    // 月租金
 	PayCycle string  `json:"pay_cycle"`                        // 支付周期(月付、季付、年付)
-	Deposit  float32 `json:"deposit" gorm:"type:numeric(5,2)"` // 押金
+	Deposit  float32 `json:"deposit" gorm:"type:numeric(8,2)"` // 押金
 
 	Address string `json:"address"` // 房屋详细地址
 	ImgUrl  string `json:"img_url"` // 房屋列表图片

@@ -5,9 +5,9 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	log "github.com/sirupsen/logrus"
+	"gorm.io/gorm"
 	"io/ioutil"
 	"net/http"
-	"yizu/conf"
 	"yizu/modules"
 	"yizu/service"
 	"yizu/util"
@@ -21,7 +21,7 @@ type HouseManager struct {
 // List 获取房源列表
 func (*HouseManager) List(c *gin.Context) {
 	arg := &modules.HouseQueryArg{}
-	if err := c.ShouldBind(arg); err != nil {
+	if err := c.BindJSON(arg); err != nil {
 		c.JSON(http.StatusBadRequest, modules.ArgErr())
 		return
 	}
@@ -41,22 +41,22 @@ func (*HouseManager) List(c *gin.Context) {
 func (*HouseManager) Modify(c *gin.Context) {
 
 	// 房子封面图
-	file, err := c.FormFile("house_img")
-	if err != nil {
-		c.JSON(http.StatusBadRequest, modules.ArgErr())
-		return
-	}
-	err = c.SaveUploadedFile(file, conf.ServerConfig().HouseImgUrl + "/" + file.Filename) // 需要将文件名入库
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, modules.Failure())
-		log.Errorf("图片保存失败: %v", err)
-	} else {
-		c.JSON(http.StatusOK, modules.Success())
-	}
+	//file, err := c.FormFile("house_img")
+	//if err != nil {
+	//	c.JSON(http.StatusBadRequest, modules.ArgErr())
+	//	return
+	//}
+	//err = c.SaveUploadedFile(file, conf.ServerConfig().HouseImgUrl + "/" + file.Filename) // 需要将文件名入库
+	//if err != nil {
+	//	c.JSON(http.StatusInternalServerError, modules.Failure())
+	//	log.Errorf("图片保存失败: %v", err)
+	//} else {
+	//	c.JSON(http.StatusOK, modules.Success())
+	//}
 	// 解析房子其他信息
 	info := modules.House{}
 	req, _ := ioutil.ReadAll(c.Request.Body)
-	err = json.Unmarshal(req, &info)
+	err := json.Unmarshal(req, &info)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, modules.ArgErr())
 		return
@@ -82,7 +82,7 @@ func (*HouseManager) Modify(c *gin.Context) {
 			flag = true
 		}
 	}
-	err = tx.Where(modules.House{Id: info.Id}).Update("house_img", file.Filename).Error
+	//err = tx.Where(modules.House{Id: info.Id}).Update("house_img", file.Filename).Error
 	if err != nil {
 		flag = true
 	}
@@ -128,11 +128,38 @@ func (*HouseManager) GetHouse(c *gin.Context) {
 		return
 	}
 	var house modules.House
-	err = db.Where("id = ?", houseId).Find(&house).Error
-	if err != nil {
+	err = db.Where("id = ?", houseId).First(&house).Error
+	if gorm.ErrRecordNotFound == err {
+		c.JSON(http.StatusOK, modules.NoRecord())
+		return
+	} else if err != nil {
 		c.JSON(http.StatusBadRequest, modules.SysErr())
 		return
 	}
+
+	// 向浏览历史中添加记录
+	b, _ := json.Marshal(house)
+	var his modules.HouseHistory
+	json.Unmarshal(b, &his)
+	redis := yizuutil.GetRedis()
+	cookie, err := c.Cookie("session.id")
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, modules.SessionErr())
+		return
+	}
+	cache, err := redis.Get(redis.Context(), cookie).Result()
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, modules.SessionErr())
+		return
+	}
+	var info modules.CacheInfo
+	json.Unmarshal([]byte(cache), &info)
+	his.UserId = info.UserId
+	err = db.Create(&his).Error
+	if err != nil {
+		log.Errorf("更新浏览历史失败 %v", err)
+	}
+
 	res := modules.ResultInfo{}
 	res.Data = house
 	c.JSON(http.StatusOK, res)
@@ -143,7 +170,6 @@ func (*HouseManager) ScanHistory(c *gin.Context) {
 	cacheInfo, ok := service.GetCacheInfo(c)
 	if !ok {
 		c.JSON(http.StatusBadRequest, modules.SessionErr())
-		return
 	}
 	userId := cacheInfo.UserId
 
