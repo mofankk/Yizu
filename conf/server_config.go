@@ -40,14 +40,14 @@ func ServerConfig() *Config{
 	once.Do(func() {
 		config = &Config{}
 		r := redisConfig{
-			Address:  "152.136.114.51:923",
+			Address:  "localhost:923",
 			Password: "Cx330$2021.@",
 			DB:       0,
 		}
 		p := postgresConfig{
 			Username: "baitong",
 			Password: "Cx330$2021.@",
-			Address:  "152.136.114.51",
+			Address:  "localhost",
 			Port:     "2237",
 			DBName:   "yizu",
 		}
